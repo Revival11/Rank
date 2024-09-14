@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Rank - Fire SMP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .rank-option {
+            margin: 15px 0;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn-buy {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        .btn-buy:hover {
+            background-color: #218838;
+        }
+        .alert {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Buy Rank - Fire SMP</h1>
+    
+    <form id="rank-form">
+        <!-- Pilihan Rank -->
+        <div class="rank-option">
+            <label for="rank">Pilih Rank</label>
+            <select id="rank">
+                <option value="VIP">VIP - 1K Kit, 5K/Bulan, 10K/Tahun, 25K Permanen</option>
+                <option value="MVP">MVP - 3K Kit, 10K/Bulan, 15K/Tahun, 35K Permanen</option>
+                <option value="Legend">Legend - 5K Kit, 15K/Bulan, 20K/Tahun, 45K Permanen</option>
+            </select>
+        </div>
+
+        <!-- Pilihan Waktu -->
+        <div class="rank-option">
+            <label for="duration">Pilih Durasi</label>
+            <select id="duration">
+                <option value="Kit">Kit Only</option>
+                <option value="Bulan">Per Bulan</option>
+                <option value="Tahun">Per Tahun</option>
+                <option value="Permanen">Permanen</option>
+            </select>
+        </div>
+
+        <!-- Input Gamertag -->
+        <div class="rank-option">
+            <label for="gamertag">Gamertag Minecraft</label>
+            <input type="text" id="gamertag" placeholder="Masukkan gamertag">
+        </div>
+
+        <!-- Metode Pembayaran -->
+        <div class="rank-option">
+            <label for="payment-method">Metode Pembayaran</label>
+            <select id="payment-method">
+                <option value="Dana">Dana</option>
+                <option value="GoPay">GoPay (Coming Soon)</option>
+            </select>
+        </div>
+
+        <!-- Tombol Pembelian -->
+        <button type="button" class="btn-buy" onclick="checkDanaBalance()">Buy with Dana</button>
+
+        <!-- Pesan Error -->
+        <div class="alert" id="alert-message">Saldo Dana tidak mencukupi. Silakan top-up saldo Anda.</div>
+    </form>
+</div>
+
+<script>
+    function calculateTotal() {
+        const rank = document.getElementById('rank').value;
+        const duration = document.getElementById('duration').value;
+
+        let price = 0;
+
+        if (rank === 'VIP') {
+            if (duration === 'Kit') price = 1000;
+            if (duration === 'Bulan') price = 5000;
+            if (duration === 'Tahun') price = 10000;
+            if (duration === 'Permanen') price = 25000;
+        } else if (rank === 'MVP') {
+            if (duration === 'Kit') price = 3000;
+            if (duration === 'Bulan') price = 10000;
+            if (duration === 'Tahun') price = 15000;
+            if (duration === 'Permanen') price = 35000;
+        } else if (rank === 'Legend') {
+            if (duration === 'Kit') price = 5000;
+            if (duration === 'Bulan') price = 15000;
+            if (duration === 'Tahun') price = 20000;
+            if (duration === 'Permanen') price = 45000;
+        }
+
+        return price;
+    }
+
+    function checkDanaBalance() {
+        const gamertag = document.getElementById('gamertag').value;
+
+        if (!gamertag) {
+            alert('Masukkan gamertag Anda terlebih dahulu.');
+            return;
+        }
+
+        // Simulasi saldo Dana
+        let danaBalance = 20000; // Ganti dengan response dari API Dana
+        let totalPrice = calculateTotal();
+
+        if (danaBalance >= totalPrice) {
+            // Jika saldo cukup, arahkan ke halaman konfirmasi
+            window.location.href = 'confirmation.html';
+        } else {
+            // Jika saldo tidak mencukupi
+            document.getElementById('alert-message').style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
