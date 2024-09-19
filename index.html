@@ -5,23 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buy Rank - Fire SMP</title>
     <style>
+        .smp {
+            color: orange;
+        }
+        .fire {
+            color: yellow;
+        }
+        .buyrank {
+            color: #000;
+        }
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: orange;
             margin: 0;
             padding: 20px;
         }
         .container {
             max-width: 600px;
             margin: 0 auto;
-            background-color: #fff;
+            background-color: yellow;
             padding: 20px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 1);
             border-radius: 8px;
         }
         h1 {
             text-align: center;
-            color: #333;
+            background-color: #d1d1d1;
+            border: 1px solid #000;
+            border-radius: 20px;
         }
         .rank-option {
             margin: 15px 0;
@@ -60,10 +71,9 @@
 <body>
 
 <div class="container">
-    <h1>Buy Rank - Fire SMP</h1>
+    <h1><div class="buyrank">Buy Rank -</div><div class="fire"> Fire</div> <div class="smp">SMP</h1>
     
     <form id="rank-form">
-        <!-- Pilihan Rank -->
         <div class="rank-option">
             <label for="rank">Pilih Rank</label>
             <select id="rank">
@@ -73,7 +83,6 @@
             </select>
         </div>
 
-        <!-- Pilihan Waktu -->
         <div class="rank-option">
             <label for="duration">Pilih Durasi</label>
             <select id="duration">
@@ -84,13 +93,11 @@
             </select>
         </div>
 
-        <!-- Input Gamertag -->
         <div class="rank-option">
             <label for="gamertag">Gamertag Minecraft</label>
             <input type="text" id="gamertag" placeholder="Masukkan gamertag">
         </div>
 
-        <!-- Metode Pembayaran -->
         <div class="rank-option">
             <label for="payment-method">Metode Pembayaran</label>
             <select id="payment-method">
@@ -99,10 +106,8 @@
             </select>
         </div>
 
-        <!-- Tombol Pembelian -->
         <button type="button" class="btn-buy" onclick="checkDanaBalance()">Buy with Dana</button>
 
-        <!-- Pesan Error -->
         <div class="alert" id="alert-message">Saldo Dana tidak mencukupi. Silakan top-up saldo Anda.</div>
     </form>
 </div>
@@ -142,15 +147,33 @@
             return;
         }
 
-        // Simulasi saldo Dana
-        let danaBalance = 20000; // Ganti dengan response dari API Dana
+        let danaBalance = 20000; // Simulasi saldo Dana
         let totalPrice = calculateTotal();
 
         if (danaBalance >= totalPrice) {
-            // Jika saldo cukup, arahkan ke halaman konfirmasi
-            window.location.href = 'confirmation.html';
+            // Simpan transaksi dan arahkan ke admin panel
+            fetch('/process-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    gamertag: gamertag,
+                    rank: document.getElementById('rank').value,
+                    duration: document.getElementById('duration').value,
+                    totalPrice: totalPrice
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = 'admin.html'; // Arahkan ke admin panel
+                } else {
+                    document.getElementById('alert-message').style.display = 'block';
+                }
+            })
+            .catch(error => console.error('Error:', error));
         } else {
-            // Jika saldo tidak mencukupi
             document.getElementById('alert-message').style.display = 'block';
         }
     }

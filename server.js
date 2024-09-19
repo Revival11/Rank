@@ -1,36 +1,56 @@
-// Import express framework
 const express = require('express');
-const path = require('path');
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
+const fs = require('fs');
+const path = require('path');
 
-// Middleware untuk parsing JSON (jika kamu memerlukan parsing body request)
+let transactions = []; // Array untuk menyimpan data transaksi
+
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Rute untuk halaman pembayaran
-app.get('/payment', (req, res) => {
-  // Mengirim file index.html sebagai halaman pembayaran
-  res.sendFile(path.join(__dirname, 'index.html')); // Sesuaikan dengan lokasi file index.html
+// Hidupkan file HTML langsung dari root folder
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Rute untuk halaman konfirmasi pembayaran
-app.get('/confirmation', (req, res) => {
-  // Mengirim file confirmation.html sebagai halaman konfirmasi pembayaran
-  res.sendFile(path.join(__dirname, 'confirmation.html')); // Sesuaikan dengan lokasi file confirmation.html
+// Akses untuk halaman admin yang tetap bernama confirmation.html
+app.get('/confirmation.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'confirmation.html'));
 });
 
-// Rute untuk memproses pembayaran (contoh sederhana)
+// Endpoint untuk memproses pembayaran
 app.post('/process-payment', (req, res) => {
-  const { amount, method } = req.body; // Mengambil data dari request body
-  // Logika pembayaran di sini, misalnya validasi atau pemrosesan
-  if (amount && method) {
-    res.json({ message: 'Pembayaran berhasil!', status: 'success' });
-  } else {
-    res.status(400).json({ message: 'Pembayaran gagal. Data tidak valid.', status: 'error' });
-  }
+    const { gamertag, rank, duration, totalPrice } = req.body;
+
+    // Simulasi saldo Dana
+    let danaBalance = 20000; // Ganti dengan response dari API Dana
+
+    if (danaBalance >= totalPrice) {
+        // Simpan data transaksi
+        const transaction = {
+            gamertag: gamertag,
+            rank: rank,
+            duration: duration,
+            totalPrice: totalPrice,
+            timestamp: new Date().toISOString()
+        };
+        transactions.push(transaction);
+        
+        // Simpan ke file jika perlu
+        fs.writeFileSync(path.join(__dirname, 'transactions.json'), JSON.stringify(transactions, null, 2));
+
+        res.json({ success: true });
+    } else {
+        res.json({ success: false });
+    }
 });
 
-// Menjalankan server
+// Endpoint untuk mendapatkan data transaksi untuk admin
+app.get('/get-transactions', (req, res) => {
+    res.json({ transactions: transactions });
+});
+
 app.listen(port, () => {
-  console.log(`Server berjalan di http://localhost:${port}`);
+    console.log(`Server berjalan di http://localhost:${port}`);
 });
